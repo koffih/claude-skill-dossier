@@ -32,6 +32,9 @@ comes back to one table when they have to act. Write for that reader.
 - Say who does what: "Maria designates...", "We prepare...". Passive voice hides the owner.
 - State uncertainty once, where it applies, with what would settle it: "about 500 calls a day
   according to the contract, to be confirmed". Never spread hedges over every sentence.
+- Never tell a client that the work is reused, already built for someone else, or "not starting
+  from a blank page". It reads as already paid for and lowers the price of the work. Describe what
+  the client gets and what remains to be done for them.
 - Bold marks what a skimming reader must catch: two or three phrases per page, not whole sentences.
 
 ## Words to cut
