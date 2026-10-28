@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 // dossier build: Markdown source -> designed .docx + .pdf + page images for review.
 //
-//   node build.mjs <source.md> [--out DIR] [--theme NAME|FILE.json] [--no-pdf] [--force]
+//   node build.mjs <source.md> [--out DIR] [--theme NAME|FILE.json] [--brand NAME|none] [--no-pdf] [--force]
+//
+// --brand applies a house brand (logo, colours, fonts, footer) from ~/.config/dossier/brands;
+// without it the front matter `brand:` or the default of ~/.config/dossier/config.json decides.
 //
 // Two passes: the first PDF tells on which page each heading lands, the second
 // writes those numbers into the contents. Exit code 1 on a blocking check.
@@ -10,14 +13,15 @@ import path from 'path';
 import { execFileSync } from 'child_process';
 import { parseSource } from './lib/parse.mjs';
 import { writeDocx } from './lib/writer.mjs';
-import { renderFigure, renderCover, contactSheet, closeBrowser, SKILL_DIR } from './lib/browser.mjs';
+import { renderFigure, renderCover, renderBar, contactSheet, closeBrowser, SKILL_DIR } from './lib/browser.mjs';
+import { brandName, loadBrand, brandTheme, installBrandFonts } from './lib/brand.mjs';
 import { lint } from './check.mjs';
 
 const args = process.argv.slice(2);
 const opt = k => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : undefined; };
 const flag = k => args.includes(k);
-const src = args.find(a => !a.startsWith('--') && a !== opt('--out') && a !== opt('--theme'));
-if (!src) { console.error('usage: build.mjs <source.md> [--out DIR] [--theme NAME|FILE] [--no-pdf] [--force]'); process.exit(2); }
+const src = args.find(a => !a.startsWith('--') && ![opt('--out'), opt('--theme'), opt('--brand')].includes(a));
+if (!src) { console.error('usage: build.mjs <source.md> [--out DIR] [--theme NAME|FILE] [--brand NAME|none] [--no-pdf] [--force]'); process.exit(2); }
 
 const srcPath = path.resolve(src);
 const srcDir = path.dirname(srcPath);
@@ -25,7 +29,15 @@ const { meta, blocks } = parseSource(fs.readFileSync(srcPath, 'utf8'));
 meta.__dir = srcDir;
 const lang = (meta.lang || 'fr').slice(0, 2);
 
-const theme = loadTheme(opt('--theme') || meta.theme || 'sobre');
+const brand = loadBrand(brandName(opt('--brand'), meta));
+if (brand) {
+  // the brand signs the document unless the source names someone else
+  for (const k of ['author', 'confidential']) if (!meta[k] && brand[k]) meta[k] = brand[k];
+  installBrandFonts(brand);
+  console.log(`  brand  ${brand.name}`);
+} else console.log('  brand  none');
+meta.__brand = brand;
+const theme = loadTheme(opt('--theme') || meta.theme || (brand && brand.theme) || 'sobre');
 const outDir = path.resolve(opt('--out') || path.join(srcDir, 'out'));
 fs.mkdirSync(path.join(outDir, 'figures'), { recursive: true });
 const slug = meta.file || slugify(`${meta.title}-${lang}`);
@@ -46,6 +58,7 @@ try {
     console.log(`  figure ${f.src} -> ${figures[f.src].width}x${figures[f.src].height}px`);
   }
   const cover = await renderCover(path.join(outDir, 'figures', '_cover.png'), theme, meta.paper);
+  if (brand && brand.topBar) cover.bar = await renderBar(path.join(outDir, 'figures', '_bar.png'), brand.topBar, meta.paper);
 
   // 3. pass one, find the pages, pass two
   const docxPath = path.join(outDir, `${slug}.docx`);
@@ -92,8 +105,9 @@ function loadTheme(name) {
   const t = JSON.parse(fs.readFileSync(file, 'utf8'));
   const base = t.extends ? JSON.parse(fs.readFileSync(path.join(SKILL_DIR, 'themes', `${t.extends}.json`), 'utf8')) : null;
   const merged = base ? { ...base, ...t, colors: { ...base.colors, ...t.colors }, sizes: { ...base.sizes, ...t.sizes }, layout: { ...base.layout, ...t.layout }, fonts: { ...base.fonts, ...t.fonts } } : t;
-  if (meta.brand) Object.assign(merged.colors, Object.fromEntries(Object.entries(meta.brand).map(([k, v]) => [k, String(v).replace('#', '')])));
-  return merged;
+  const branded = brandTheme(merged, brand);
+  if (meta.brand && typeof meta.brand === 'object') Object.assign(branded.colors, Object.fromEntries(Object.entries(meta.brand).map(([k, v]) => [k, String(v).replace('#', '')])));
+  return branded;
 }
 
 function collect(bs, type, out = []) {

@@ -1,7 +1,7 @@
 ---
 name: dossier
-description: "Produce a client-ready, designed document as Word (.docx) and PDF: status report, proposal, functional specification, audit, roadmap, decision memo, procedure. Cover page, contents with real page numbers, document information and version history, chapter openers, executive summary box, key-figure tiles, styled tables with status chips, numbered figures drawn as SVG, Mermaid or data charts in the theme's colours, header and footer; then every page is rendered and looked at before delivery, in one or several languages. Use when a document leaves the house (sent to a client, a board, a partner, an investor, a public body), when the user asks for a Word or PDF version to send, a professional or beautiful document, or says a document looks poor, plain or generic. French triggers (fais-moi un document Word, version Word a envoyer a ma cliente, document professionnel, rapport client, bilan, feuille de route, cahier des charges, proposition commerciale, compte rendu officiel, dossier de presentation, audit, version anglaise du document, les documents sont pauvres, rends ce document plus beau, document PDF a envoyer)."
-argument-hint: "[what the document is, who reads it, languages] [--unattended]"
+description: "Produce a client-ready, designed document as Word (.docx) and PDF: status report, proposal, functional specification, audit, roadmap, decision memo, procedure. Cover page, contents with real page numbers, document information and version history, chapter openers, executive summary box, key-figure tiles, styled tables with status chips, numbered figures drawn as SVG, Mermaid or data charts in the theme's colours, header and footer, with the house brand (logo, colours, fonts, top band, footer) applied by default or left out on request; then every page is rendered and looked at before delivery, in one or several languages. Use when a document leaves the house (sent to a client, a board, a partner, an investor, a public body), when the user asks for a Word or PDF version to send, a professional or beautiful document, or says a document looks poor, plain or generic. French triggers (fais-moi un document Word, version Word a envoyer a ma cliente, document professionnel, rapport client, bilan, feuille de route, cahier des charges, proposition commerciale, compte rendu officiel, dossier de presentation, audit, version anglaise du document, les documents sont pauvres, rends ce document plus beau, document PDF a envoyer, avec mon logo, sans logo, sans ma marque, marque blanche, document neutre, papier a en-tete)."
+argument-hint: "[what the document is, who reads it, languages] [--brand NAME|none] [--unattended]"
 ---
 
 # Dossier: documents a client keeps, reads and acts on
@@ -50,8 +50,14 @@ With `--unattended`, take the recommendation and state it in the delivery messag
    Each has a structure in `references/document-types.md`.
 4. **Languages.** One source file per language, figures included. Never machine-translate a built
    document: translate the source, then build.
-5. **Brand.** The client's colours or logo if the document goes out under their name; otherwise
-   pick the theme that fits the sector (`references/design.md`).
+5. **Brand.** Three cases, settled without a question when the request says it:
+   - **House brand** (the default when `~/.config/dossier/config.json` names one): the firm's logo,
+     colours, fonts, top band and footer, and its author line. Nothing to write in the source.
+   - **No brand** when the user says "sans logo", "sans ma marque", "neutre", "marque blanche", or
+     the document goes out under someone else's name: `brand: none` in the front matter (or
+     `--brand none`). The plain theme of the sector applies (`references/design.md`).
+   - **The client's brand** when the document goes out under their name: their own brand folder
+     (`brand: client-name`), or `logo:` and `brand: { accent: ... }` for a one-off.
 
 When the content already exists (a page, a chat, notes, an earlier document), collect it first and
 work from it: the facts are the user's, the structure and the finish are yours.
@@ -129,8 +135,10 @@ sizes and the choice of exhibit are in `references/figures.md`.
 ## Step 4: build
 
 ```bash
-node <skill-dir>/scripts/build.mjs path/to/source.md [--out DIR] [--theme NAME|file.json]
+node <skill-dir>/scripts/build.mjs path/to/source.md [--out DIR] [--theme NAME|file.json] [--brand NAME|none]
 ```
+
+The build prints `brand <name>` or `brand none` first: check it is the one the brief settled.
 
 It checks the source (errors stop the build, warnings are listed), renders the figures and the
 cover, writes the Word file, converts it to PDF, finds the page of every heading, writes those
@@ -165,7 +173,23 @@ it trips on.
 - Validate the Word file when it goes to an important client: the `docx` skill of
   `anthropics/skills` ships `scripts/office/validate.py` (needs `defusedxml` and `lxml`).
 
+## House brands
+
+A brand lives outside the skill, in `~/.config/dossier/brands/<name>/` (`DOSSIER_HOME` moves it):
+`brand.json` plus its logo and fonts. `~/.config/dossier/config.json` may set
+`{ "defaultBrand": "<name>" }` so every document carries it without asking. Format, the fictional
+example in `examples/brand/northwind/`, and how to make one from a firm's existing invoices are in
+`references/design.md`. To create one, ask for the logo (PNG, transparent) and take colours and
+fonts from what the firm already prints; never invent a brand.
+
 ## Pitfalls already paid for
+
+- **A brand logo is dark on transparent**: on the dark cover band it disappears. The brand gives a
+  `logoOnDark` version (white, accent kept); make one when it is missing.
+- **Subset web fonts lack symbols** (`≈`, `→`): LibreOffice falls back to DejaVu for those
+  characters only. Use the foundry's full TTF files, and check `pdffonts` on the PDF.
+- **An accent that passes on the screen fails on paper**: text in the accent colour needs 4.5:1
+  against white. Keep the exact brand colour for the band and the logo, a darker shade for text.
 
 - **Exporting a docs page to Word is not a document.** A chat-built page exported as `.docx` has no
   cover, no contents and no design. Build from a source with this skill instead.

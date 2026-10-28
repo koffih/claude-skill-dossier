@@ -1,0 +1,12 @@
+{
+  "name": "northwind",
+  "legalName": "Northwind Studio Inc.",
+  "theme": "sobre",
+  "author": "Northwind Studio",
+  "footer": "Northwind Studio Inc.  ·  northwind.example",
+  "logo": "logo.png",
+  "logoOnDark": "logo-on-dark.png",
+  "logoHeight": 34,
+  "topBar": [{ "color": "1B2A41", "share": 85 }, { "color": "C8553D", "share": 15 }],
+  "colors": { "accent": "A8432F", "accentDark": "1B2A41", "accentSoft": "FBEDEA" }
+}

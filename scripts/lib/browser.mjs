@@ -61,7 +61,8 @@ function fontUrl(theme, face) {
   const e0 = theme.embed[0];
   const e1 = theme.embed[1] || e0;
   const file = { regular: e0.regular, italic: e0.italic || e0.regular, bold: e0.bold || e0.regular, semibold: e1.regular }[face];
-  return pathToFileURL(path.join(SKILL_DIR, 'assets/fonts', file)).href;
+  const dir = (face === 'semibold' ? e1.dir : e0.dir) || path.join(SKILL_DIR, 'assets/fonts');
+  return pathToFileURL(path.join(dir, file)).href;
 }
 
 async function shoot(html, outPng, { scale = 3, selector = '#stage', width = 1200 } = {}) {
@@ -167,6 +168,18 @@ export async function renderCover(outPng, theme, paper) {
 </svg></body></html>`;
   const dims = await shoot(html, outPng, { scale: 2.5, width: W + 20 });
   return { png: outPng, ...dims, bandPx: band };
+}
+
+// Thin band across the top edge of every page (a house brand's signature): segments of colour,
+// each with its share of the width, e.g. [{ "color": "0A182F", "share": 85 }, { "color": "048D7C", "share": 15 }].
+export async function renderBar(outPng, segments, paper) {
+  const W = Math.round((paper === 'a4' ? 8.27 : 8.5) * 96);
+  const total = segments.reduce((t, s) => t + (s.share || 1), 0);
+  let x = 0;
+  const rects = segments.map(s => { const w = W * (s.share || 1) / total; const r = `<rect x="${x}" y="0" width="${w + 0.5}" height="6" fill="#${String(s.color).replace('#', '')}"/>`; x += w; return r; }).join('');
+  const html = `<html><head><style>html,body{margin:0}</style></head><body><svg id="stage" xmlns="http://www.w3.org/2000/svg" width="${W}" height="6" viewBox="0 0 ${W} 6">${rects}</svg></body></html>`;
+  const dims = await shoot(html, outPng, { scale: 3, width: W + 20 });
+  return { png: outPng, ...dims };
 }
 
 // One image with every rendered page side by side, to judge the whole at a glance.

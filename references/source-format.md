@@ -22,7 +22,7 @@ code blocks, `---` rules).
 | `lang` | `fr` or `en`: labels, dates, chapter word, spelling language | `en` |
 | `paper` | `letter` (default) or `a4` | |
 | `theme` | `sobre`, `chaleur`, `institution`, or a path to a theme JSON | |
-| `brand` | Colour overrides: `{ accent: "#C8102E", accentDark: "#3A0A12", accentSoft: "#FBEAEC" }` | |
+| `brand` | A house brand by name, `none` for no brand (see `design.md`), or a map of colour overrides: `{ accent: "#C8102E", accentDark: "#3A0A12", accentSoft: "#FBEAEC" }` | `none` |
 | `logo` | Path to a PNG or JPG, placed on the cover band (`logoWidth`, `logoHeight` in px) | |
 | `file` | Output file name without extension | `booking-roadmap-en` |
 | `history` | List of `{ version, date, author, change }` for the version table | |

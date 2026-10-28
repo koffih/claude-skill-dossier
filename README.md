@@ -53,6 +53,15 @@ node ~/.claude/skills/dossier/scripts/check.mjs report.md            # checks on
 See `examples/specification/spec.md` for a complete source using every block, and
 `references/source-format.md` for the syntax.
 
+## House brand, or none
+
+Put a firm's logo, colours, fonts and footer once in `~/.config/dossier/brands/<name>/brand.json`
+and, if you want it on every document, `{ "defaultBrand": "<name>" }` in
+`~/.config/dossier/config.json`. A document then carries the logo on its cover and running header,
+a coloured band on each page and the firm's footer. `brand: none` in the front matter (or
+`--brand none`) gives a plain document for white-label work. A fictional example is in
+`examples/brand/northwind/`; the format is in `references/design.md`.
+
 ## Test
 
 ```bash

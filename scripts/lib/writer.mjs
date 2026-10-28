@@ -395,11 +395,15 @@ export async function writeDocx({ meta, blocks, theme, figures, cover, tocPages 
       altText: { title: 'cover', description: 'cover art', name: 'cover' },
     })],
   }));
-  if (meta.logo) {
-    const logoPath = path.resolve(meta.__dir, meta.logo);
+  const brand = meta.__brand;
+  const coverLogo = meta.logo ? path.resolve(meta.__dir, meta.logo) : brand && (brand.logoOnDark || brand.logo);
+  if (coverLogo) {
+    const logoPath = coverLogo;
     const ext = path.extname(logoPath).slice(1).toLowerCase() === 'png' ? 'png' : 'jpg';
+    const h = meta.logoHeight || (brand && brand.logoHeight) || 46;
+    const w = meta.logoWidth || (ext === 'png' ? Math.round(h * pngRatio(logoPath)) : 130);
     coverKids.push(new Paragraph({ children: [new ImageRun({
-      type: ext, data: fs.readFileSync(logoPath), transformation: { width: meta.logoWidth || 130, height: meta.logoHeight || 46 },
+      type: ext, data: fs.readFileSync(logoPath), transformation: { width: w, height: h },
       floating: { horizontalPosition: { relative: HorizontalPositionRelativeFrom.PAGE, offset: in2(mg.left) * 635 }, verticalPosition: { relative: VerticalPositionRelativeFrom.PAGE, offset: 0.7 * 914400 }, allowOverlap: true, wrap: { type: TextWrappingType.NONE } },
       altText: { title: 'logo', description: 'logo', name: 'logo' },
     })] }));
@@ -489,22 +493,45 @@ export async function writeDocx({ meta, blocks, theme, figures, cover, tocPages 
 
   // ---------- header and footer ----------
   const small = { size: pt(S.small - 0.5), color: C.faint };
+  // a house brand puts its logo at the left of the running header and its band at the top edge
+  const headKids = [];
+  if (cover.bar) headKids.push(new ImageRun({
+    type: 'png', data: fs.readFileSync(cover.bar.png),
+    transformation: { width: Math.round((PW / 1440) * 96), height: 6 },
+    floating: {
+      horizontalPosition: { relative: HorizontalPositionRelativeFrom.PAGE, offset: 0 },
+      verticalPosition: { relative: VerticalPositionRelativeFrom.PAGE, offset: 0 },
+      behindDocument: true, allowOverlap: true, wrap: { type: TextWrappingType.NONE },
+    },
+    altText: { title: 'band', description: 'brand band', name: 'band' },
+  }));
+  if (brand && brand.logo) {
+    const lh = 15;
+    headKids.push(new ImageRun({ type: 'png', data: fs.readFileSync(brand.logo), transformation: { width: Math.round(lh * pngRatio(brand.logo)), height: lh },
+      altText: { title: 'logo', description: brand.legalName || brand.name, name: 'logo' } }));
+    headKids.push(new TextRun({ text: `\t${meta.short || meta.title}${meta.client ? `  ·  ${meta.client}` : ''}`, font: F.heading, ...small, color: C.muted }));
+  } else {
+    headKids.push(new TextRun({ text: meta.short || meta.title, font: F.heading, ...small, color: C.muted }), new TextRun({ text: `\t${meta.client || ''}`, ...small }));
+  }
   const header = new Header({ children: [new Paragraph({
     tabStops: [{ type: TabStopType.RIGHT, position: CW }],
     border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: C.rule, space: 6 } },
-    children: [new TextRun({ text: meta.short || meta.title, font: F.heading, ...small, color: C.muted }), new TextRun({ text: `\t${meta.client || ''}`, ...small })],
+    children: headKids,
   })] });
+  const footLeft = [brand && brand.footer, meta.confidential].filter(Boolean).join('  ·  ');
   const footer = new Footer({ children: [new Paragraph({
     tabStops: [{ type: TabStopType.RIGHT, position: CW }],
-    children: [new TextRun({ text: meta.confidential || '', ...small }), new TextRun({ ...small, children: ['\t', ...T.page(PageNumber.CURRENT, PageNumber.TOTAL_PAGES)] })],
+    children: [new TextRun({ text: footLeft, ...small }), new TextRun({ ...small, children: ['\t', ...T.page(PageNumber.CURRENT, PageNumber.TOTAL_PAGES)] })],
   })] });
 
   // ---------- document ----------
-  const fontData = f => fs.readFileSync(path.join(SKILL_DIR, 'assets/fonts', f));
-  const embedded = (theme.embed || []).map(e => ({
+  const embedded = (theme.embed || []).map(e => {
+    const fontData = f => fs.readFileSync(path.join(e.dir || path.join(SKILL_DIR, 'assets/fonts'), f));
+    return {
     name: e.name, data: fontData(e.regular),
     ...(e.bold ? { bold: fontData(e.bold) } : {}), ...(e.italic ? { italic: fontData(e.italic) } : {}), ...(e.boldItalic ? { boldItalic: fontData(e.boldItalic) } : {}),
-  }));
+    };
+  });
   const pageProps = { page: { size: { width: PW, height: PH }, margin: { ...M, header: in2(0.45), footer: in2(0.4) } } };
 
   const doc = new Document({
@@ -557,3 +584,9 @@ function spacer(after) {
 }
 
 function in2(x) { return Math.round(x * 1440); }
+
+// width / height of a PNG, read from its header
+function pngRatio(file) {
+  const b = fs.readFileSync(file);
+  return b.readUInt32BE(16) / b.readUInt32BE(20);
+}
