@@ -1,0 +1,66 @@
+{
+  "name": "institution",
+  "description": "Navy and teal. Public bodies, finance, legal, health, boards.",
+  "colors": {
+    "ink": "17212B",
+    "muted": "4F5B67",
+    "faint": "85909B",
+    "rule": "D5DCE2",
+    "surface": "F2F5F7",
+    "paper": "FFFFFF",
+    "accent": "0F7468",
+    "accentDark": "0E2A47",
+    "accentSoft": "E4F2F0",
+    "good": "1E7A46",
+    "goodSoft": "E7F4EC",
+    "warn": "8F5200",
+    "warnSoft": "FCF0D9",
+    "bad": "B42318",
+    "badSoft": "FDE9E7",
+    "info": "1F5FAD",
+    "infoSoft": "E9F0FA"
+  },
+  "fonts": {
+    "body": "IBM Plex Sans",
+    "heading": "IBM Plex Sans SmBld",
+    "mono": "Liberation Mono",
+    "symbol": "Segoe UI Symbol"
+  },
+  "embed": [
+    {
+      "name": "IBM Plex Sans",
+      "regular": "IBMPlexSans-Regular.ttf",
+      "bold": "IBMPlexSans-Bold.ttf",
+      "italic": "IBMPlexSans-Italic.ttf",
+      "boldItalic": "IBMPlexSans-BoldItalic.ttf"
+    },
+    {
+      "name": "IBM Plex Sans SmBld",
+      "regular": "IBMPlexSans-SemiBold.ttf",
+      "italic": "IBMPlexSans-SemiBoldItalic.ttf"
+    }
+  ],
+  "sizes": {
+    "body": 10.5,
+    "table": 9.5,
+    "small": 8.5,
+    "h1": 24,
+    "h2": 14,
+    "h3": 11.5,
+    "title": 32,
+    "subtitle": 14,
+    "kpi": 21,
+    "label": 8.5
+  },
+  "layout": {
+    "chapterNewPage": true,
+    "numberHeadings": true,
+    "coverBand": 0.36,
+    "margins": {
+      "top": 1.0,
+      "bottom": 0.9,
+      "left": 0.95,
+      "right": 0.95
+    }
+  }
+}

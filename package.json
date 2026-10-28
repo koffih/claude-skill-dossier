@@ -1,0 +1,14 @@
+{
+  "name": "claude-skill-dossier",
+  "private": true,
+  "type": "module",
+  "description": "Engine of the dossier skill: Markdown source to designed Word and PDF.",
+  "dependencies": {
+    "docx": "^9.15.0",
+    "echarts": "^6.1.0",
+    "marked": "^18.1.2",
+    "mermaid": "^12.2.0",
+    "puppeteer-core": "^25.16.0",
+    "yaml": "^2.9.1"
+  }
+}

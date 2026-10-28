@@ -1,0 +1,66 @@
+{
+  "name": "chaleur",
+  "description": "Deep plum and warm coral. Culture, dance, hospitality, events, retail.",
+  "colors": {
+    "ink": "231C24",
+    "muted": "5E5560",
+    "faint": "8D8590",
+    "rule": "E2DADF",
+    "surface": "F7F3F4",
+    "paper": "FFFFFF",
+    "accent": "B4472F",
+    "accentDark": "3B1D3A",
+    "accentSoft": "FBEDE8",
+    "good": "1E7A46",
+    "goodSoft": "E7F4EC",
+    "warn": "8F5200",
+    "warnSoft": "FCF0D9",
+    "bad": "B42318",
+    "badSoft": "FDE9E7",
+    "info": "1F5FAD",
+    "infoSoft": "E9F0FA"
+  },
+  "fonts": {
+    "body": "IBM Plex Sans",
+    "heading": "IBM Plex Sans SmBld",
+    "mono": "Liberation Mono",
+    "symbol": "Segoe UI Symbol"
+  },
+  "embed": [
+    {
+      "name": "IBM Plex Sans",
+      "regular": "IBMPlexSans-Regular.ttf",
+      "bold": "IBMPlexSans-Bold.ttf",
+      "italic": "IBMPlexSans-Italic.ttf",
+      "boldItalic": "IBMPlexSans-BoldItalic.ttf"
+    },
+    {
+      "name": "IBM Plex Sans SmBld",
+      "regular": "IBMPlexSans-SemiBold.ttf",
+      "italic": "IBMPlexSans-SemiBoldItalic.ttf"
+    }
+  ],
+  "sizes": {
+    "body": 10.5,
+    "table": 9.5,
+    "small": 8.5,
+    "h1": 24,
+    "h2": 14,
+    "h3": 11.5,
+    "title": 32,
+    "subtitle": 14,
+    "kpi": 21,
+    "label": 8.5
+  },
+  "layout": {
+    "chapterNewPage": true,
+    "numberHeadings": true,
+    "coverBand": 0.36,
+    "margins": {
+      "top": 1.0,
+      "bottom": 0.9,
+      "left": 0.95,
+      "right": 0.95
+    }
+  }
+}

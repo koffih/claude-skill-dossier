@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 200" width="760" height="200" font-size="13">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+  <g fill="none" stroke="var(--muted)" stroke-width="1.4"><path d="M190 100H284" marker-end="url(#a)"/><path d="M476 100H570" marker-end="url(#a)"/></g>
+  <rect x="24" y="64" width="166" height="72" rx="10" fill="var(--paper)" stroke="var(--faint)" stroke-width="1.4"/>
+  <rect x="286" y="56" width="188" height="88" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2.2"/>
+  <rect x="572" y="64" width="166" height="72" rx="10" fill="var(--paper)" stroke="var(--faint)" stroke-width="1.4"/>
+  <g text-anchor="middle">
+    <text x="107" y="96" font-weight="600" fill="var(--ink)">Customers</text><text x="107" y="116" font-size="11.5" fill="var(--muted)">web and mobile</text>
+    <text x="380" y="94" font-size="15" font-weight="600" fill="var(--ink)">Booking service</text><text x="380" y="116" font-size="11.5" fill="var(--muted)">the system specified here</text>
+    <text x="655" y="96" font-weight="600" fill="var(--ink)">Payment provider</text><text x="655" y="116" font-size="11.5" fill="var(--muted)">card payments</text>
+  </g>
+  <g font-size="11.5" fill="var(--muted)" text-anchor="middle"><text x="237" y="90">books</text><text x="523" y="90">charges</text></g>
+</svg>

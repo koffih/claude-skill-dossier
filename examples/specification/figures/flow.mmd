@@ -1,0 +1,6 @@
+flowchart LR
+  A[Customer books online] --> B{Slot free?}
+  B -- yes --> C[Booking confirmed]
+  B -- no --> D[Waiting list]
+  C --> E[Reminder 24 h before]
+  D --> F[Offered the next free slot]

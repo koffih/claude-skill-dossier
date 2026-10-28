@@ -1,0 +1,12 @@
+{
+  "width": 720, "height": 340,
+  "option": {
+    "legend": { "top": 0, "left": 0 },
+    "xAxis": { "type": "category", "data": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] },
+    "yAxis": { "type": "value", "name": "Bookings" },
+    "series": [
+      { "name": "Today", "type": "bar", "data": [42, 38, 51, 47, 66, 91, 30] },
+      { "name": "Target after launch", "type": "line", "data": [55, 50, 60, 58, 80, 110, 40] }
+    ]
+  }
+}
