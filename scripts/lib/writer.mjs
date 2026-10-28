@@ -467,7 +467,7 @@ export async function writeDocx({ meta, blocks, theme, figures, cover, tocPages 
     front.push(...table({
       header: [[{ text: T.version }], [{ text: T.date }], [{ text: T.author }], [{ text: T.change }]], align: [],
       rows: meta.history.map(h => [[{ text: String(h.version) }], [{ text: longDate(h.date, lang) }], [{ text: h.author || '' }], [{ text: h.change || '' }]]),
-      attrs: { widths: '12,22,22,44', compact: true },
+      attrs: { widths: '9,19,32,40', compact: true },
     }, {}));
   }
 
