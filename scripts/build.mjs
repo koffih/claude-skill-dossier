@@ -129,7 +129,8 @@ function toPdf(docx, dir) {
 
 function headingPages(pdf, outline, lang) {
   const txt = execFileSync('pdftotext', ['-layout', pdf, '-'], { maxBuffer: 64 << 20 }).toString();
-  const pages = txt.split('\f').map(p => p.split('\n').map(norm));
+  // lines of the contents page end with dot leaders: skip them, or an unnumbered heading is found there
+  const pages = txt.split('\f').map(p => p.split('\n').filter(l => !/\.{5,}\s*\d+\s*$/.test(l)).map(norm));
   const label = lang === 'en' ? 'CHAPTER' : 'CHAPITRE';
   const found = {};
   let from = 0;
@@ -146,6 +147,11 @@ function headingPages(pdf, outline, lang) {
     } else {
       const want = norm(`${o.num} ${o.text}`).slice(0, 34);
       hit = pages.findIndex((p, i) => i >= from && p.some(l => l.startsWith(want)));
+      // a long chapter title wraps on the page: retry on its first words
+      if (hit < 0 && o.level === 1) {
+        const short = want.slice(0, 18);
+        hit = pages.findIndex((p, i) => i >= from && p.some(l => l.startsWith(short)));
+      }
     }
     if (hit >= 0) { found[o.anchor] = hit + 1; from = hit; }
   }
